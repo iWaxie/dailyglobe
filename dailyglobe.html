@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haber BBCODE Oluşturucu</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #ccc;
+            padding: 30px;
+            max-width: 800px;
+            margin: auto;
+        }
+        h2 {
+            color: #38761d;
+            border-bottom: 2px solid #38761d;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #fff;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            background-color: #1e1e1e;
+            color: #fff;
+            border: 1px solid #333;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        .row {
+            display: flex;
+            gap: 15px;
+        }
+        .row .form-group {
+            flex: 1;
+        }
+        button {
+            background-color: #38761d;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2b5915;
+        }
+        .copy-btn {
+            background-color: #444;
+            margin-top: 5px;
+        }
+        .copy-btn:hover {
+            background-color: #555;
+        }
+        .output-container {
+            margin-top: 30px;
+        }
+        #output {
+            height: 200px;
+            background-color: #0a0a0a;
+            font-family: 'Courier New', Courier, monospace;
+            color: #4caf50;
+            border: 1px solid #38761d;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>BBCODE Haber Oluşturucu</h2>
+
+    <div class="row">
+        <div class="form-group">
+            <label for="yazar">Yazar Adı Soyadı:</label>
+            <input type="text" id="yazar" placeholder="Örn: John Doe">
+        </div>
+        <div class="form-group">
+            <label for="kategori">Kategori:</label>
+            <input type="text" id="kategori" placeholder="Örn: Politika, Gündem">
+        </div>
+        <div class="form-group">
+            <label for="sure">Okuma Süresi:</label>
+            <input type="text" id="sure" placeholder="Örn: 3 dk">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="resim">Haber Görseli Linki:</label>
+        <input type="text" id="resim" placeholder="https://...">
+    </div>
+
+    <div class="form-group">
+        <label for="baslik">Haber Başlığı:</label>
+        <input type="text" id="baslik" placeholder="Çarpıcı bir başlık girin...">
+    </div>
+
+    <div class="form-group">
+        <label for="ozet">Haber Özeti (Spot):</label>
+        <textarea id="ozet" placeholder="Okuyucuyu çekecek kısa özet..."></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="alinti">Kısa Alıntı (Pull-quote):</label>
+        <input type="text" id="alinti" placeholder="Örn: Bu olay şehrin kaderini değiştirecek...">
+    </div>
+
+    <div class="form-group">
+        <label for="icerik">Haber Ana Metni:</label>
+        <textarea id="icerik" style="min-height: 200px;" placeholder="Haberin ana gövdesini buraya yazın... Paragraflar arasında bir kez Enter'a basmanız yeterlidir."></textarea>
+    </div>
+
+    <button onclick="uretBBCODE()">BBCODE'u Çıktı Al</button>
+
+    <div class="output-container">
+        <label for="output">Hazır BBCODE Çıktısı:</label>
+        <textarea id="output" readonly></textarea>
+        <button class="copy-btn" onclick="kopyala()">Panoya Kopyala</button>
+    </div>
+
+    <script>
+        function uretBBCODE() {
+            // Girdileri al
+            const yazar = document.getElementById('yazar').value || "Belirtilmedi";
+            const kategori = document.getElementById('kategori').value || "Gündem";
+            const sure = document.getElementById('sure').value || "1 dk";
+            const resim = document.getElementById('resim').value || "LINK_YOK";
+            const baslik = document.getElementById('baslik').value || "BAŞLIK GİRİLMEDİ";
+            const ozet = document.getElementById('ozet').value || "Özet girilmedi.";
+            const alinti = document.getElementById('alinti').value || "Alıntı girilmedi.";
+            const icerik = document.getElementById('icerik').value || "Metin girilmedi.";
+
+            // Kategori metnini üst etiket için büyük harfe çevir
+            const kategoriUst = kategori.toUpperCase();
+
+            // Alıntı div'ini ana metnin hemen başına (sağa yaslı şekilde) yerleştiriyoruz ki metin etrafından aksın
+            const alintiKutusu = `[div style="float: right; margin: 5px 0 5px 15px; border-top: 1px solid #38761d; border-bottom: 1px solid #38761d; padding: 10px; width: 200px; font-size: 15px; font-weight: bold; color: #fff; text-align: center; font-family: 'Georgia', serif; line-height: 1.3;"]"${alinti}"[/div]`;
+
+            // BBCODE Şablonu
+            const bbcode = `[div style="max-width: 850px; margin: 0 auto; background-color: #121212; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #ccc; border-left: 5px solid #38761d; box-shadow: 0 0 20px rgba(0,0,0,0.5);"][div style="padding: 0; position: relative; height: 300px; overflow: hidden;"][img width=850]${resim}[/img][div style="position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, #000, transparent); padding: 20px; box-sizing: border-box;"][div style="background: #38761d; color: #fff; padding: 3px 10px; font-size: 10px; font-weight: bold; display: inline-block; margin-bottom: 5px; text-transform: uppercase;"]${kategoriUst}[/div][div style="font-size: 32px; font-weight: bold; color: #fff; line-height: 1.1; font-family: 'Impact', sans-serif; text-shadow: 1px 1px 3px #000;"]${baslik}[/div][/div][/div][div style="padding: 20px;"][div style="background: #1a1a1a; padding: 10px 15px; border-left: 2px solid #555; margin-bottom: 15px; font-size: 12px; color: #aaa; font-style: italic;"][b]ÖZET:[/b] ${ozet}[/div][div style="font-size: 14px; line-height: 1.5; color: #ccc; text-align: justify;"][b][color=#38761d]LOS SANTOS —[/color][/b] ${alintiKutusu}${icerik}[/div][div style="margin-top: 20px; border-top: 1px solid #222; padding-top: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #666;"][div]Yazar: [b][color=#38761d]${yazar}[/color][/b][/div][div]Kategori: [b]${kategori}[/b] | Okuma Süresi: [b]${sure}[/b][/div][/div][/div][/div]`;
+
+            // Çıktıyı ekrana yazdır
+            document.getElementById('output').value = bbcode;
+        }
+
+        function kopyala() {
+            const copyText = document.getElementById('output');
+            if(copyText.value === "") return;
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            document.execCommand("copy");
+            
+            const btn = document.querySelector('.copy-btn');
+            btn.innerText = "Kopyalandı!";
+            btn.style.backgroundColor = "#38761d";
+            setTimeout(() => {
+                btn.innerText = "Panoya Kopyala";
+                btn.style.backgroundColor = "#444";
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
