@@ -140,18 +140,17 @@
         .toolbar-btn { background: transparent; border: none; color: #888; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: bold; transition: all 0.2s; }
         .toolbar-btn:hover { background: #222; color: #fff; }
         
-        /* YENİ: Ana metin alanı artık dikey olarak büyütülebilir (resize: vertical) */
         .main-content-group { display: flex; flex-direction: column; }
         #icerik { 
             min-height: 300px; height: 400px; font-size: 15px; line-height: 1.6; 
-            border: none; background: #0d0d0f; resize: vertical; /* Dikey boyutlandırma eklendi */
+            border: none; background: #0d0d0f; resize: vertical;
             border-left: 2px solid #1f1f22; padding: 15px; border-radius: 0;
         }
         #icerik:focus { border-left-color: #38761d; }
 
         .word-count { font-size: 11px; color: #555; text-align: right; margin-top: 5px; font-family: monospace;}
 
-        /* Önizleme Paneli (HATA GİDERİLDİ: Flexbox kaynaklı kesilme sorunu için display: block yapıldı) */
+        /* Önizleme Paneli */
         .preview-panel { width: 50%; background: #09090b; padding: 30px; overflow-y: auto; display: block; }
         .preview-header { font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 20px; display: flex; justify-content: space-between;}
         
@@ -470,7 +469,6 @@
             const sure = dakika + " dk";
             const kategoriUst = kategori.toUpperCase();
 
-            // YENİ: Akıllı Özet (Spot) Alanı
             let ozetKutusuBBCODE = "";
             let ozetKutusuHTML = "";
             if (ozetInput !== "") {
@@ -478,7 +476,6 @@
                 ozetKutusuHTML = `<div style="background: #1a1a1a; padding: 6px 10px; border-left: 2px solid #555; margin-bottom: 10px; font-size: 11px; color: #aaa; font-style: italic;"><b>ÖZET:</b> ${ozetInput}</div>`;
             }
 
-            // YENİ: Akıllı Alıntı (Pull-quote)
             let alintiKutusu = "";
             let alintiOnizlemeHTML = "";
             if (alintiInput !== "") {
@@ -489,11 +486,12 @@
             let baslikBBCODE = "";
             let baslikHTML = "";
 
+            /* YENİ GÖRSEL MERKEZLEME MANTIĞI: BBCode tarafında background-image kullanarak merkezledik */
             if (resimInput !== "") {
-                baslikBBCODE = `[div style="padding: 0; position: relative; height: 300px; overflow: hidden;"][img width=850]${resimInput}[/img][div style="position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, #000, transparent); padding: 20px; box-sizing: border-box;"][div style="background: #38761d; color: #fff; padding: 3px 10px; font-size: 10px; font-weight: bold; display: inline-block; margin-bottom: 5px; text-transform: uppercase;"]${kategoriUst}[/div][div style="font-size: 32px; font-weight: bold; color: #fff; line-height: 1.1; font-family: 'Impact', sans-serif; text-shadow: 1px 1px 3px #000;"]${baslik}[/div][/div][/div]`;
+                baslikBBCODE = `[div style="padding: 0; position: relative; height: 300px; background-image: url('${resimInput}'); background-size: cover; background-position: center; border-bottom: 2px solid #38761d;"][div style="position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, #000, transparent); padding: 20px; box-sizing: border-box;"][div style="background: #38761d; color: #fff; padding: 3px 10px; font-size: 10px; font-weight: bold; display: inline-block; margin-bottom: 5px; text-transform: uppercase;"]${kategoriUst}[/div][div style="font-size: 32px; font-weight: bold; color: #fff; line-height: 1.1; font-family: 'Impact', sans-serif; text-shadow: 1px 1px 3px #000;"]${baslik}[/div][/div][/div]`;
+                
                 baslikHTML = `
-                    <div style="position: relative; height: 150px; overflow: hidden;">
-                        <img src="${resimInput}" style="width: 100%; height: 150px; object-fit: cover; display: block;">
+                    <div style="position: relative; height: 150px; background-image: url('${resimInput}'); background-size: cover; background-position: center; border-bottom: 2px solid #38761d;">
                         <div style="position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, #000, transparent); padding: 10px; box-sizing: border-box;">
                             <div style="background: #38761d; color: #fff; padding: 2px 6px; font-size: 9px; font-weight: bold; display: inline-block; text-transform: uppercase;">${kategoriUst}</div>
                             <div style="font-size: 20px; font-weight: bold; color: #fff; font-family: 'Impact', sans-serif; text-shadow: 1px 1px 2px #000;">${baslik}</div>
