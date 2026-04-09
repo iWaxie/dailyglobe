@@ -155,11 +155,10 @@
 
         .word-count { font-size: 11px; color: #555; text-align: right; margin-top: 5px; font-family: monospace;}
 
-        /* Önizleme Paneli (Beyaz Kağıt Konsepti) */
+        /* Önizleme Paneli */
         .preview-panel { width: 50%; background: #09090b; padding: 30px; overflow-y: auto; display: block; border-left: 1px solid #1f1f22;}
         .preview-header { font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 20px; display: flex; justify-content: space-between;}
         
-        /* FIX: overflow: hidden; eklendi (Görsel render sorunu için sidebar manipulasyonu yetmezse BBCode ve tarayıcı renderı için taşma engellenmeli) */
         #live-preview {
             background-color: transparent; border-radius: 8px; overflow: hidden;
             box-shadow: 0 10px 40px rgba(0,0,0,0.4); 
@@ -342,21 +341,18 @@
     <textarea id="output" style="position: absolute; left: -9999px; opacity: 0;"></textarea>
 
     <script>
-        // Tarih Oluşturucu
         function getTurkceTarih() {
             const aylar = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
             const d = new Date();
             return d.getDate() + " " + aylar[d.getMonth()] + " " + d.getFullYear();
         }
 
-        // Title Case Dönüştürücü (Örn: SAN ANDREAS -> San Andreas)
         function toTitleCase(str) {
             return str.replace(/\w\S*/g, function(txt){
                 return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
             });
         }
 
-        // --- BİLDİRİM ---
         function bildirimGoster(mesaj) {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -371,7 +367,6 @@
             }, 3000);
         }
 
-        // --- LOGIN ---
         function sistemeGiris() {
             const btn = document.getElementById('login-button');
             const btnText = document.getElementById('btn-text');
@@ -398,7 +393,6 @@
             }, 1200); 
         }
 
-        // --- TAB DESTEĞİ ---
         document.getElementById('icerik').addEventListener('keydown', function(e) {
             if (e.key == 'Tab') {
                 e.preventDefault();
@@ -410,14 +404,12 @@
             }
         });
 
-        // --- VERİ YÖNETİMİ ---
         const alanlar = ['yazar', 'kategori', 'konum', 'resim', 'resimBilgi', 'baslik', 'ozet', 'alinti', 'icerik'];
 
-        // FIX: Çökmeyi düzeltmek için kayıt anahtarı 'dg_v3_' olarak değiştirildi
         function verileriYukle() {
             let veriVar = false;
             alanlar.forEach(id => {
-                const kayitliVeri = localStorage.getItem('dg_v3_' + id);
+                const kayitliVeri = localStorage.getItem('dg_v8_' + id); // Key yenilendi
                 if (kayitliVeri) {
                     document.getElementById(id).value = kayitliVeri;
                     veriVar = true;
@@ -429,7 +421,7 @@
         let saveTimeout;
         function otomatikKaydet() {
             alanlar.forEach(id => {
-                localStorage.setItem('dg_v3_' + id, document.getElementById(id).value);
+                localStorage.setItem('dg_v8_' + id, document.getElementById(id).value);
             });
             
             const status = document.getElementById('save-status');
@@ -449,7 +441,7 @@
             if(confirm("Tüm içeriği silmek istediğinize emin misiniz? Bu işlem geri alınamaz.")) {
                 alanlar.forEach(id => {
                     if(id !== 'konum') document.getElementById(id).value = '';
-                    localStorage.removeItem('dg_v3_' + id);
+                    localStorage.removeItem('dg_v8_' + id);
                 });
                 document.getElementById('konum').value = 'SAN ANDREAS';
                 uretAndOnizle();
@@ -474,9 +466,7 @@
             otomatikKaydet(); 
         }
 
-        // --- BBCODE & HTML ÜRETİMİ ---
         function uretAndOnizle() {
-            // FIX: Çökme sorununu engelleyen hata yakalama
             try {
                 const yazarInput = document.getElementById('yazar').value.trim();
                 const kategoriInput = document.getElementById('kategori').value.trim();
@@ -494,14 +484,12 @@
                     return;
                 }
 
-                // Varsayılan Atamalar
                 const yazar = yazarInput !== "" ? yazarInput : "Daily Globe";
                 const kategori = kategoriInput !== "" ? kategoriInput.toUpperCase() : "GÜNDEM";
                 const baslik = baslikInput !== "" ? baslikInput : "Haber Başlığı Bekleniyor...";
                 const konumBaslik = toTitleCase(seciliKonum); 
                 const gununTarihi = getTurkceTarih(); 
 
-                // --- GÖRSEL KISMI ---
                 let gorselKutusuBBCODE = "";
                 let gorselKutusuHTML = "";
 
@@ -519,18 +507,21 @@
 ${bilgiBBCODE}
 [/div]`;
                     
+                    // FIX: Tarayıcı indirme kısıtlamasını aşmak için resim "wsrv.nl" proxy servisi üzerinden yüklenir.
+                    // Ayrıca resim taşıp bozulmasın diye object-fit: contain eklenmiştir.
+                    const guvenliResimLink = "https://wsrv.nl/?url=" + encodeURIComponent(resimInput);
+                    
                     gorselKutusuHTML = `
-<div style="padding: 0 30px; margin-top: 10px; margin-bottom: 10px;" data-html2canvas-ignore="false">
+<div style="padding: 0 30px; margin-top: 10px; margin-bottom: 10px;">
     <div style="border: 1px solid #eee; padding: 3px;">
         <div style="width: 100%; height: 300px; background-color: #f5f5f5; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-            <img src="${resimInput}" style="max-width: 100%; max-height: 100%; object-fit: cover;" crossorigin="anonymous">
+            <img src="${guvenliResimLink}" crossorigin="anonymous" style="max-width: 100%; max-height: 100%; object-fit: contain;">
         </div>
     </div>
     ${bilgiHTML}
 </div>`;
                 }
 
-                // --- ÖZET KISMI ---
                 let ozetBBCODE = "";
                 let ozetHTML = "";
                 if (ozetInput !== "") {
@@ -538,19 +529,16 @@ ${bilgiBBCODE}
                     ozetHTML = `<div style="font-family: Arial, sans-serif; font-size: 14px; color: #666; line-height: 1.3; font-style: italic; margin: 0;">${ozetInput}</div>`;
                 }
 
-                // --- İÇERİK, PARAGRAFLAR VE ALINTI ---
                 const icerikSatirlari = icerikRaw !== "" ? icerikRaw.split('\n').filter(p => p.trim() !== "") : ["Ana metin bekleniyor..."];
                 let icerikBBCODE = "";
                 let icerikHTML = "";
 
                 icerikSatirlari.forEach((paragraf, index) => {
-                    // BBCode formatlarını HTML'e çevir (sadece HTML önizleme için)
                     let parsedHTML = paragraf.replace(/\[b\]/g, '<b>').replace(/\[\/b\]/g, '</b>')
                                              .replace(/\[i\]/g, '<i>').replace(/\[\/i\]/g, '</i>')
                                              .replace(/\[u\]/g, '<u>').replace(/\[\/u\]/g, '</u>')
                                              .replace(/\[color=(.*?)\]/g, '<span style="color:$1">').replace(/\[\/color\]/g, '</span>');
 
-                    // İlk paragrafa KONUM etiketini ekle
                     if (index === 0) {
                         icerikBBCODE += `[div style="margin-bottom: 8px; line-height: 1.4;"][span style="font-weight: bold; color: #0e6638;"]${seciliKonum} -[/span] ${paragraf}[/div]`;
                         icerikHTML += `<div style="margin-bottom: 8px; line-height: 1.4;"><span style="font-weight: bold; color: #0e6638;">${seciliKonum} -</span> ${parsedHTML}</div>`;
@@ -559,23 +547,18 @@ ${bilgiBBCODE}
                         icerikHTML += `<div style="margin-bottom: 8px; line-height: 1.4;">${parsedHTML}</div>`;
                     }
 
-                    // Alıntı varsa ilk paragraftan sonra ekle (eğer tek paragrafsa onun altına ekler)
                     if (alintiInput !== "" && index === 0) {
                         icerikBBCODE += `[div style="margin: 10px 0; padding-left: 10px; border-left: 3px solid #0e6638; font-style: italic; color: #555; font-size: 14px; line-height: 1.3;"]"${alintiInput}"[/div]`;
                         icerikHTML += `<div style="margin: 10px 0; padding-left: 10px; border-left: 3px solid #0e6638; font-style: italic; color: #555; font-size: 14px; line-height: 1.3;">"${alintiInput}"</div>`;
                     }
                 });
 
-                // --- FULL BBCODE ---
-                // FIX: overflow: hidden; eklendi (Fotoğraf renderında köşelerin düzleşmesi için gerekli taşma engelleme)
                 const bbcode = `[div style="max-width: 800px; margin: 0 auto; background-color: #ffffff; font-family: 'Times New Roman', serif; color: #222; box-shadow: 0 0 5px rgba(0,0,0,0.05); border-top: 4px solid #0e6638; border-radius: 4px; overflow: hidden;"][div style="text-align: center; padding: 15px 0 5px 0; border-bottom: 1px solid #eee; margin: 0;"][div style="font-size: 42px; font-weight: 900; color: #0e6638; letter-spacing: -1px; line-height: 1; text-transform: uppercase; margin: 0;"]DAILY GLOBE[/div][div style="font-family: Arial, sans-serif; font-size: 9px; color: #999; letter-spacing: 3px; text-transform: uppercase; margin-top: 2px;"]LOS SANTOS • EST. 2026[/div][/div][div style="border-bottom: 1px solid #eee; padding: 4px 0; text-align: center; font-family: Arial, sans-serif; font-size: 10px; color: #888; margin: 0; line-height: 1;"][span style="border: 1px solid #0e6638; padding: 1px 5px; border-radius: 2px; color: #0e6638; font-weight: bold;"]${kategori}[/span] [span]${gununTarihi}[/span] [span]•[/span] [span]${konumBaslik}[/span][/div][div style="padding: 15px 30px 5px 30px; text-align: center; margin: 0;"][div style="font-size: 28px; font-weight: bold; color: #111; line-height: 1.1; margin-bottom: 8px;"]${baslik}[/div]${ozetBBCODE}[div style="font-family: Arial, sans-serif; font-size: 10px; color: #bbb; margin-top: 8px;"]Haber: [span style="color: #444; font-weight: bold;"]${yazar}[/span][/div][/div]${gorselKutusuBBCODE}[div style="padding: 0 30px 15px 30px; font-size: 14px; color: #222; text-align: justify; font-family: 'Georgia', serif; margin: 0;"]${icerikBBCODE}[/div][div style="padding: 8px; text-align: center; border-top: 1px solid #eee; font-family: Arial, sans-serif; font-size: 9px; color: #bbb; margin: 0;"][div style="font-weight: bold; color: #ccc;"]THE DAILY GLOBE[/div][div]© 2026 Tüm Hakları Saklıdır[/div][/div][/div]`;
                 
                 document.getElementById('output').value = bbcode;
 
-                // --- FULL HTML (PREVIEW) ---
-                // FIX: overflow: hidden; eklendi (Fotoğraf renderında köşelerin düzleşmesi için gerekli taşma engelleme)
                 const previewHTML = `
-                <div id="render-target" style="max-width: 800px; margin: 0 auto; background-color: #ffffff; font-family: 'Times New Roman', serif; color: #222; border-top: 4px solid #0e6638; border-radius: 4px; overflow: hidden;">
+                <div id="render-target" style="max-width: 800px; margin: 0 auto; background-color: #ffffff; font-family: 'Times New Roman', serif; color: #222; overflow: hidden; border-top: 4px solid #0e6638; border-radius: 4px;">
                     <div style="text-align: center; padding: 15px 0 5px 0; border-bottom: 1px solid #eee; margin: 0;">
                         <div style="font-size: 42px; font-weight: 900; color: #0e6638; letter-spacing: -1px; line-height: 1; text-transform: uppercase; margin: 0;">DAILY GLOBE</div>
                         <div style="font-family: Arial, sans-serif; font-size: 9px; color: #999; letter-spacing: 3px; text-transform: uppercase; margin-top: 2px;">LOS SANTOS • EST. 2026</div>
@@ -599,13 +582,13 @@ ${bilgiBBCODE}
                 </div>`;
                 
                 document.getElementById('live-preview').innerHTML = previewHTML;
+
             } catch (error) {
                 console.error("Render hatası:", error);
-                document.getElementById('live-preview').innerHTML = `<div class="empty-state" style="color: #ef5350; border-color: #ef5350;">Render Motoru Çöktü.<br>Lütfen son yaptığınız değişikliği geri alın veya verileri sıfırlayın.<br><small>Hata: ${error.message}</small></div>`;
+                document.getElementById('live-preview').innerHTML = `<div class="empty-state" style="color: #ef5350; border-color: #ef5350;">Render Motoru Çöktü.<br>Sistem otomatik olarak korunmaya alındı. Lütfen verileri sıfırlayın.<br><small>Hata: ${error.message}</small></div>`;
             }
         }
 
-        // --- PANOLAMA İŞLEMİ ---
         function kopyalaBBCODE() {
             const bbcode = document.getElementById('output').value;
             if(!bbcode) {
@@ -624,7 +607,6 @@ ${bilgiBBCODE}
             });
         }
 
-        // --- GÖRSEL İNDİRME İŞLEMİ (KESKİN KÖŞE FIX) ---
         function gorseliIndir() {
             const renderTarget = document.getElementById('render-target');
             
@@ -634,16 +616,15 @@ ${bilgiBBCODE}
             }
 
             bildirimGoster("Görsel hazırlanıyor, lütfen bekleyin...");
-
-            // FIX: Fotoğraf indirme anında border-radius'u geçici olarak 0 yapıp keskin köşeyi sağlıyoruz
+            
             renderTarget.style.borderRadius = "0px";
 
+            // Sadece tek, basit ve çalışan html2canvas render fonksiyonu çağrılır.
             html2canvas(renderTarget, {
-                scale: 2, // Yüksek çözünürlük
+                scale: 2, 
                 useCORS: true, 
-                backgroundColor: "#ffffff" // Arkaplanı beyaz yap (kağıt efekti için)
+                backgroundColor: "#ffffff" 
             }).then(canvas => {
-                // Render bittikten sonra border-radius'u eski haline döndürüyoruz
                 renderTarget.style.borderRadius = "4px";
 
                 const link = document.createElement('a');
@@ -653,7 +634,6 @@ ${bilgiBBCODE}
                 link.click();
                 bildirimGoster("Görsel başarıyla indirildi!");
             }).catch(err => {
-                // Hata durumunda da border-radius'u eski haline döndürüyoruz
                 renderTarget.style.borderRadius = "4px";
                 bildirimGoster("Görsel oluşturulurken bir hata oluştu.");
                 console.error(err);
