@@ -228,7 +228,7 @@
             <div class="nav-section">
                 <div class="nav-title">Sosyal Medya</div>
                 <a href="https://lifeinvader.rina-social.com/eclipse" target="_blank" class="nav-item">
-                    <img src="https://i.hizliresim.com/jd6e0yv.png" alt="LI"> ECLIPSE
+                    <img src="https://i.hizliresim.com/jd6e0yv.png" alt="LI"> ECLIPSE LifeInvader
                 </a>
                 <a href="https://lifeinvader.rina-social.com/dailyglobe" target="_blank" class="nav-item">
                     <img src="https://i.hizliresim.com/jd6e0yv.png" alt="LI"> Daily Globe
@@ -283,33 +283,33 @@
                         </div>
                         <div class="form-group">
                             <label>Kategori</label>
-                            <input type="text" id="kategori" placeholder="Örn: Asayiş, Gündem" oninput="otomatikKaydet()">
+                            <input type="text" id="kategori" maxlength="100" placeholder="Örn: Asayiş, Gündem" oninput="otomatikKaydet()">
                         </div>
                         <div class="form-group">
                             <label>Yazar</label>
-                            <input type="text" id="yazar" placeholder="Boş bırakılırsa: Daily Globe" oninput="otomatikKaydet()">
+                            <input type="text" id="yazar" maxlength="100" placeholder="Boş bırakılırsa: Daily Globe" oninput="otomatikKaydet()">
                         </div>
                         <div class="form-group">
                             <label>Haber Görseli Linki</label>
-                            <input type="text" id="resim" placeholder="https://... (İsteğe bağlı)" oninput="otomatikKaydet()">
+                            <input type="text" id="resim" maxlength="1000" placeholder="https://... (İsteğe bağlı)" oninput="otomatikKaydet()">
                         </div>
                         <div class="form-group full">
                             <label>Görsel Alt Yazısı / Bilgisi</label>
-                            <input type="text" id="resimBilgi" placeholder="Örn: Güvenlik kamerası görüntüsü. (İsteğe bağlı)" oninput="otomatikKaydet()">
+                            <input type="text" id="resimBilgi" maxlength="200" placeholder="Örn: Güvenlik kamerası görüntüsü. (İsteğe bağlı)" oninput="otomatikKaydet()">
                         </div>
                     </div>
 
                     <div class="form-group full" style="margin-bottom: 20px;">
-                        <input type="text" id="baslik" placeholder="Haber Manşeti" oninput="otomatikKaydet()">
+                        <input type="text" id="baslik" maxlength="300" placeholder="Haber Manşeti" oninput="otomatikKaydet()">
                     </div>
 
                     <div class="form-group full" style="margin-bottom: 20px;">
-                        <textarea id="ozet" placeholder="Haberin kısa özeti (spot metin). İsteğe bağlıdır." oninput="otomatikKaydet()"></textarea>
+                        <textarea id="ozet" maxlength="2000" placeholder="Haberin kısa özeti (spot metin). İsteğe bağlıdır." oninput="otomatikKaydet()"></textarea>
                     </div>
 
                     <div class="form-group full" style="margin-bottom: 20px;">
                         <label>Özel Alıntı Kutusu (Paragraf Arası)</label>
-                        <input type="text" id="alinti" placeholder="Haber içerisinde vurgulanacak alıntı. İsteğe bağlıdır." oninput="otomatikKaydet()">
+                        <input type="text" id="alinti" maxlength="500" placeholder="Haber içerisinde vurgulanacak alıntı. İsteğe bağlıdır." oninput="otomatikKaydet()">
                     </div>
 
                     <div class="form-group full main-content-group">
@@ -320,7 +320,8 @@
                             <button type="button" class="toolbar-btn" style="text-decoration: underline;" onclick="formataEkle('[u]', '[/u]')" title="Altı Çizili">U</button>
                             <button type="button" class="toolbar-btn" onclick="formataEkle('[color=#0e6638]', '[/color]')" style="color: #0e6638;">Yeşil Metin</button>
                         </div>
-                        <textarea id="icerik" placeholder="Haberin gövdesini yazın. Enter tuşu ile ayırdığınız her satır yeni bir paragraf oluşturur..." oninput="otomatikKaydet()"></textarea>
+                        <!-- Çökme sorununu engelleyen 40.000 karakterlik güvenlik sınırı -->
+                        <textarea id="icerik" maxlength="40000" placeholder="Haberin gövdesini yazın. Enter tuşu ile ayırdığınız her satır yeni bir paragraf oluşturur..." oninput="otomatikKaydet()"></textarea>
                     </div>
                 </div>
 
@@ -341,21 +342,18 @@
     <textarea id="output" style="position: absolute; left: -9999px; opacity: 0;"></textarea>
 
     <script>
-        // Tarih Oluşturucu
         function getTurkceTarih() {
             const aylar = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
             const d = new Date();
             return d.getDate() + " " + aylar[d.getMonth()] + " " + d.getFullYear();
         }
 
-        // Title Case Dönüştürücü (Örn: SAN ANDREAS -> San Andreas)
         function toTitleCase(str) {
             return str.replace(/\w\S*/g, function(txt){
                 return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
             });
         }
 
-        // --- BİLDİRİM ---
         function bildirimGoster(mesaj) {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -370,7 +368,6 @@
             }, 3000);
         }
 
-        // --- LOGIN ---
         function sistemeGiris() {
             const btn = document.getElementById('login-button');
             const btnText = document.getElementById('btn-text');
@@ -397,7 +394,6 @@
             }, 1200); 
         }
 
-        // --- TAB DESTEĞİ ---
         document.getElementById('icerik').addEventListener('keydown', function(e) {
             if (e.key == 'Tab') {
                 e.preventDefault();
@@ -409,13 +405,13 @@
             }
         });
 
-        // --- VERİ YÖNETİMİ ---
         const alanlar = ['yazar', 'kategori', 'konum', 'resim', 'resimBilgi', 'baslik', 'ozet', 'alinti', 'icerik'];
 
+        // Çökmeyi düzeltmek için kayıt anahtarı 'dg_v2_' olarak değiştirildi
         function verileriYukle() {
             let veriVar = false;
             alanlar.forEach(id => {
-                const kayitliVeri = localStorage.getItem('dg_classic_' + id);
+                const kayitliVeri = localStorage.getItem('dg_v2_' + id);
                 if (kayitliVeri) {
                     document.getElementById(id).value = kayitliVeri;
                     veriVar = true;
@@ -427,7 +423,7 @@
         let saveTimeout;
         function otomatikKaydet() {
             alanlar.forEach(id => {
-                localStorage.setItem('dg_classic_' + id, document.getElementById(id).value);
+                localStorage.setItem('dg_v2_' + id, document.getElementById(id).value);
             });
             
             const status = document.getElementById('save-status');
@@ -447,7 +443,7 @@
             if(confirm("Tüm içeriği silmek istediğinize emin misiniz? Bu işlem geri alınamaz.")) {
                 alanlar.forEach(id => {
                     if(id !== 'konum') document.getElementById(id).value = '';
-                    localStorage.removeItem('dg_classic_' + id);
+                    localStorage.removeItem('dg_v2_' + id);
                 });
                 document.getElementById('konum').value = 'SAN ANDREAS';
                 uretAndOnizle();
@@ -472,7 +468,6 @@
             otomatikKaydet(); 
         }
 
-        // --- BBCODE & HTML ÜRETİMİ ---
         function uretAndOnizle() {
             const yazarInput = document.getElementById('yazar').value.trim();
             const kategoriInput = document.getElementById('kategori').value.trim();
@@ -496,7 +491,6 @@
             const konumBaslik = toTitleCase(seciliKonum); 
             const gununTarihi = getTurkceTarih(); 
 
-            // --- GÖRSEL KISMI ---
             let gorselKutusuBBCODE = "";
             let gorselKutusuHTML = "";
 
@@ -525,19 +519,23 @@ ${bilgiBBCODE}
 </div>`;
             }
 
-            // --- İÇERİK, PARAGRAFLAR VE ALINTI ---
+            let ozetBBCODE = "";
+            let ozetHTML = "";
+            if (ozetInput !== "") {
+                ozetBBCODE = `[div style="font-family: Arial, sans-serif; font-size: 14px; color: #666; line-height: 1.3; font-style: italic; margin: 0;"]${ozetInput}[/div]`;
+                ozetHTML = `<div style="font-family: Arial, sans-serif; font-size: 14px; color: #666; line-height: 1.3; font-style: italic; margin: 0;">${ozetInput}</div>`;
+            }
+
             const icerikSatirlari = icerikRaw !== "" ? icerikRaw.split('\n').filter(p => p.trim() !== "") : ["Ana metin bekleniyor..."];
             let icerikBBCODE = "";
             let icerikHTML = "";
 
             icerikSatirlari.forEach((paragraf, index) => {
-                // BBCode formatlarını HTML'e çevir (sadece HTML önizleme için)
                 let parsedHTML = paragraf.replace(/\[b\]/g, '<b>').replace(/\[\/b\]/g, '</b>')
                                          .replace(/\[i\]/g, '<i>').replace(/\[\/i\]/g, '</i>')
                                          .replace(/\[u\]/g, '<u>').replace(/\[\/u\]/g, '</u>')
                                          .replace(/\[color=(.*?)\]/g, '<span style="color:$1">').replace(/\[\/color\]/g, '</span>');
 
-                // İlk paragrafa KONUM etiketini ekle
                 if (index === 0) {
                     icerikBBCODE += `[div style="margin-bottom: 8px; line-height: 1.4;"][span style="font-weight: bold; color: #0e6638;"]${seciliKonum} -[/span] ${paragraf}[/div]`;
                     icerikHTML += `<div style="margin-bottom: 8px; line-height: 1.4;"><span style="font-weight: bold; color: #0e6638;">${seciliKonum} -</span> ${parsedHTML}</div>`;
@@ -546,21 +544,17 @@ ${bilgiBBCODE}
                     icerikHTML += `<div style="margin-bottom: 8px; line-height: 1.4;">${parsedHTML}</div>`;
                 }
 
-                // Alıntı varsa ilk paragraftan sonra ekle (eğer tek paragrafsa onun altına ekler)
                 if (alintiInput !== "" && index === 0) {
                     icerikBBCODE += `[div style="margin: 10px 0; padding-left: 10px; border-left: 3px solid #0e6638; font-style: italic; color: #555; font-size: 14px; line-height: 1.3;"]"${alintiInput}"[/div]`;
                     icerikHTML += `<div style="margin: 10px 0; padding-left: 10px; border-left: 3px solid #0e6638; font-style: italic; color: #555; font-size: 14px; line-height: 1.3;">"${alintiInput}"</div>`;
                 }
             });
 
-            // --- FULL BBCODE ---
-            // FIX: overflow: hidden; eklendi (köşe render sorunu için)
-            const bbcode = `[div style="max-width: 800px; margin: 0 auto; background-color: #ffffff; font-family: 'Times New Roman', serif; color: #222; box-shadow: 0 0 5px rgba(0,0,0,0.05); overflow: hidden; border-top: 4px solid #0e6638;"][div style="text-align: center; padding: 15px 0 5px 0; border-bottom: 1px solid #eee; margin: 0;"][div style="font-size: 42px; font-weight: 900; color: #0e6638; letter-spacing: -1px; line-height: 1; text-transform: uppercase; margin: 0;"]DAILY GLOBE[/div][div style="font-family: Arial, sans-serif; font-size: 9px; color: #999; letter-spacing: 3px; text-transform: uppercase; margin-top: 2px;"]LOS SANTOS • EST. 2026[/div][/div][div style="border-bottom: 1px solid #eee; padding: 4px 0; text-align: center; font-family: Arial, sans-serif; font-size: 10px; color: #888; margin: 0; line-height: 1;"][span style="border: 1px solid #0e6638; padding: 1px 5px; border-radius: 2px; color: #0e6638; font-weight: bold;"]${kategori}[/span] [span]${gununTarihi}[/span] [span]•[/span] [span]${konumBaslik}[/span][/div][div style="padding: 15px 30px 5px 30px; text-align: center; margin: 0;"][div style="font-size: 28px; font-weight: bold; color: #111; line-height: 1.1; margin-bottom: 8px;"]${baslik}[/div][div style="font-family: Arial, sans-serif; font-size: 14px; color: #666; line-height: 1.3; font-style: italic; margin: 0;"]Haberin kısa özeti buraya gelecek...[/div][div style="font-family: Arial, sans-serif; font-size: 10px; color: #bbb; margin-top: 8px;"]Haber: [span style="color: #444; font-weight: bold;"]${yazar}[/span][/div][/div]${gorselKutusuBBCODE}[div style="padding: 0 30px 15px 30px; font-size: 14px; color: #222; text-align: justify; font-family: 'Georgia', serif; margin: 0;"]${icerikBBCODE}[/div][div style="padding: 8px; text-align: center; border-top: 1px solid #eee; font-family: Arial, sans-serif; font-size: 9px; color: #bbb; margin: 0;"][div style="font-weight: bold; color: #ccc;"]THE DAILY GLOBE[/div][div]© 2026 Tüm Hakları Saklıdır[/div][/div][/div]`;
+            // Özeti dinamik şekilde yerleştirme düzeltmesi yapıldı
+            const bbcode = `[div style="max-width: 800px; margin: 0 auto; background-color: #ffffff; font-family: 'Times New Roman', serif; color: #222; box-shadow: 0 0 5px rgba(0,0,0,0.05); overflow: hidden; border-top: 4px solid #0e6638;"][div style="text-align: center; padding: 15px 0 5px 0; border-bottom: 1px solid #eee; margin: 0;"][div style="font-size: 42px; font-weight: 900; color: #0e6638; letter-spacing: -1px; line-height: 1; text-transform: uppercase; margin: 0;"]DAILY GLOBE[/div][div style="font-family: Arial, sans-serif; font-size: 9px; color: #999; letter-spacing: 3px; text-transform: uppercase; margin-top: 2px;"]LOS SANTOS • EST. 2026[/div][/div][div style="border-bottom: 1px solid #eee; padding: 4px 0; text-align: center; font-family: Arial, sans-serif; font-size: 10px; color: #888; margin: 0; line-height: 1;"][span style="border: 1px solid #0e6638; padding: 1px 5px; border-radius: 2px; color: #0e6638; font-weight: bold;"]${kategori}[/span] [span]${gununTarihi}[/span] [span]•[/span] [span]${konumBaslik}[/span][/div][div style="padding: 15px 30px 5px 30px; text-align: center; margin: 0;"][div style="font-size: 28px; font-weight: bold; color: #111; line-height: 1.1; margin-bottom: 8px;"]${baslik}[/div]${ozetBBCODE}[div style="font-family: Arial, sans-serif; font-size: 10px; color: #bbb; margin-top: 8px;"]Haber: [span style="color: #444; font-weight: bold;"]${yazar}[/span][/div][/div]${gorselKutusuBBCODE}[div style="padding: 0 30px 15px 30px; font-size: 14px; color: #222; text-align: justify; font-family: 'Georgia', serif; margin: 0;"]${icerikBBCODE}[/div][div style="padding: 8px; text-align: center; border-top: 1px solid #eee; font-family: Arial, sans-serif; font-size: 9px; color: #bbb; margin: 0;"][div style="font-weight: bold; color: #ccc;"]THE DAILY GLOBE[/div][div]© 2026 Tüm Hakları Saklıdır[/div][/div][/div]`;
             
             document.getElementById('output').value = bbcode;
 
-            // --- FULL HTML (PREVIEW) ---
-            // FIX: overflow: hidden; eklendi (köşe render sorunu için)
             const previewHTML = `
             <div id="render-target" style="max-width: 800px; margin: 0 auto; background-color: #ffffff; font-family: 'Times New Roman', serif; color: #222; overflow: hidden; border-top: 4px solid #0e6638; border-radius: 4px;">
                 <div style="text-align: center; padding: 15px 0 5px 0; border-bottom: 1px solid #eee; margin: 0;">
@@ -572,7 +566,7 @@ ${bilgiBBCODE}
                 </div>
                 <div style="padding: 15px 30px 5px 30px; text-align: center; margin: 0;">
                     <div style="font-size: 28px; font-weight: bold; color: #111; line-height: 1.1; margin-bottom: 8px;">${baslik}</div>
-                    <div style="font-family: Arial, sans-serif; font-size: 14px; color: #666; line-height: 1.3; font-style: italic; margin: 0;">Haberin kısa özeti buraya gelecek...</div>
+                    ${ozetHTML}
                     <div style="font-family: Arial, sans-serif; font-size: 10px; color: #bbb; margin-top: 8px;">Haber: <span style="color: #444; font-weight: bold;">${yazar}</span></div>
                 </div>
                 ${gorselKutusuHTML}
@@ -588,7 +582,6 @@ ${bilgiBBCODE}
             document.getElementById('live-preview').innerHTML = previewHTML;
         }
 
-        // --- PANOLAMA İŞLEMİ ---
         function kopyalaBBCODE() {
             const bbcode = document.getElementById('output').value;
             if(!bbcode) {
@@ -607,17 +600,13 @@ ${bilgiBBCODE}
             });
         }
 
-        // --- GÖRSEL İNDİRME İŞLEMİ ---
         function gorseliIndir() {
             const renderTarget = document.getElementById('render-target');
-            
             if (!renderTarget) {
                 bildirimGoster("İndirilecek bir haber bulunamadı!");
                 return;
             }
-
             bildirimGoster("Görsel hazırlanıyor, lütfen bekleyin...");
-
             html2canvas(renderTarget, {
                 scale: 2, 
                 useCORS: true, 
