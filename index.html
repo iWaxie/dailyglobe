@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GLOBE-NET | ECLIPSE İçerik Sistemi</title>
-    <!-- YENİ: dom-to-image kütüphanesi eklendi -->
+    <!-- dom-to-image kütüphanesi -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
     <style>
         /* --- MODERN RESET & TYPOGRAPHY --- */
@@ -410,7 +410,7 @@
         function verileriYukle() {
             let veriVar = false;
             alanlar.forEach(id => {
-                const kayitliVeri = localStorage.getItem('dg_v9_' + id); // Key yenilendi
+                const kayitliVeri = localStorage.getItem('dg_v10_' + id); // Key güncellendi
                 if (kayitliVeri) {
                     document.getElementById(id).value = kayitliVeri;
                     veriVar = true;
@@ -422,7 +422,7 @@
         let saveTimeout;
         function otomatikKaydet() {
             alanlar.forEach(id => {
-                localStorage.setItem('dg_v9_' + id, document.getElementById(id).value);
+                localStorage.setItem('dg_v10_' + id, document.getElementById(id).value);
             });
             
             const status = document.getElementById('save-status');
@@ -442,7 +442,7 @@
             if(confirm("Tüm içeriği silmek istediğinize emin misiniz? Bu işlem geri alınamaz.")) {
                 alanlar.forEach(id => {
                     if(id !== 'konum') document.getElementById(id).value = '';
-                    localStorage.removeItem('dg_v9_' + id);
+                    localStorage.removeItem('dg_v10_' + id);
                 });
                 document.getElementById('konum').value = 'SAN ANDREAS';
                 uretAndOnizle();
@@ -502,18 +502,17 @@
                         bilgiHTML = `<div style="font-size: 9px; color: #999; margin-top: 2px; font-family: Arial, sans-serif; text-align: left;">${resimBilgiInput}</div>`;
                     }
 
+                    // YENİ: Boyut zorlaması (height: 300px) kaldırıldı. Resim kendi orijinal formatıyla kutuya %100 oturacak.
                     gorselKutusuBBCODE = `
 [div style="padding: 0 30px; margin-top: 10px; margin-bottom: 10px;"]
-[div style="border: 1px solid #eee; padding: 3px;"][div style="width: 100%; height: 300px; background-color: #f5f5f5; overflow: hidden; display: flex; align-items: center; justify-content: center;"][img]${resimInput}[/img][/div][/div]
+[div style="border: 1px solid #eee; padding: 3px;"][div style="width: 100%; overflow: hidden; text-align: center;"][img]${resimInput}[/img][/div][/div]
 ${bilgiBBCODE}
 [/div]`;
                     
                     gorselKutusuHTML = `
 <div style="padding: 0 30px; margin-top: 10px; margin-bottom: 10px;" data-html2canvas-ignore="false">
-    <div style="border: 1px solid #eee; padding: 3px;">
-        <div style="width: 100%; height: 300px; background-color: #f5f5f5; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-            <img src="${resimInput}" crossorigin="anonymous" style="max-width: 100%; max-height: 100%; object-fit: contain;">
-        </div>
+    <div style="border: 1px solid #eee; padding: 3px; background: #fff;">
+        <img src="${resimInput}" style="width: 100%; height: auto; display: block;">
     </div>
     ${bilgiHTML}
 </div>`;
@@ -604,7 +603,6 @@ ${bilgiBBCODE}
             });
         }
 
-        // YENİ VE DAHA STABİL: dom-to-image ile indirme işlemi
         function gorseliIndir() {
             const renderTarget = document.getElementById('render-target');
             
@@ -617,7 +615,6 @@ ${bilgiBBCODE}
             
             renderTarget.style.borderRadius = "0px";
 
-            // dom-to-image kütüphanesi CORS sorunlarını kendi halleder
             domtoimage.toPng(renderTarget, { bgcolor: '#ffffff' })
                 .then(function (dataUrl) {
                     renderTarget.style.borderRadius = "4px";
