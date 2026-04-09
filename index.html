@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GLOBE-NET | ECLIPSE İçerik Sistemi</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- YENİ: dom-to-image kütüphanesi eklendi -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
     <style>
         /* --- MODERN RESET & TYPOGRAPHY --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -409,7 +410,7 @@
         function verileriYukle() {
             let veriVar = false;
             alanlar.forEach(id => {
-                const kayitliVeri = localStorage.getItem('dg_v8_' + id); // Key yenilendi
+                const kayitliVeri = localStorage.getItem('dg_v9_' + id); // Key yenilendi
                 if (kayitliVeri) {
                     document.getElementById(id).value = kayitliVeri;
                     veriVar = true;
@@ -421,7 +422,7 @@
         let saveTimeout;
         function otomatikKaydet() {
             alanlar.forEach(id => {
-                localStorage.setItem('dg_v8_' + id, document.getElementById(id).value);
+                localStorage.setItem('dg_v9_' + id, document.getElementById(id).value);
             });
             
             const status = document.getElementById('save-status');
@@ -441,7 +442,7 @@
             if(confirm("Tüm içeriği silmek istediğinize emin misiniz? Bu işlem geri alınamaz.")) {
                 alanlar.forEach(id => {
                     if(id !== 'konum') document.getElementById(id).value = '';
-                    localStorage.removeItem('dg_v8_' + id);
+                    localStorage.removeItem('dg_v9_' + id);
                 });
                 document.getElementById('konum').value = 'SAN ANDREAS';
                 uretAndOnizle();
@@ -507,15 +508,11 @@
 ${bilgiBBCODE}
 [/div]`;
                     
-                    // FIX: Tarayıcı indirme kısıtlamasını aşmak için resim "wsrv.nl" proxy servisi üzerinden yüklenir.
-                    // Ayrıca resim taşıp bozulmasın diye object-fit: contain eklenmiştir.
-                    const guvenliResimLink = "https://wsrv.nl/?url=" + encodeURIComponent(resimInput);
-                    
                     gorselKutusuHTML = `
-<div style="padding: 0 30px; margin-top: 10px; margin-bottom: 10px;">
+<div style="padding: 0 30px; margin-top: 10px; margin-bottom: 10px;" data-html2canvas-ignore="false">
     <div style="border: 1px solid #eee; padding: 3px;">
         <div style="width: 100%; height: 300px; background-color: #f5f5f5; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-            <img src="${guvenliResimLink}" crossorigin="anonymous" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+            <img src="${resimInput}" crossorigin="anonymous" style="max-width: 100%; max-height: 100%; object-fit: contain;">
         </div>
     </div>
     ${bilgiHTML}
@@ -607,6 +604,7 @@ ${bilgiBBCODE}
             });
         }
 
+        // YENİ VE DAHA STABİL: dom-to-image ile indirme işlemi
         function gorseliIndir() {
             const renderTarget = document.getElementById('render-target');
             
@@ -619,25 +617,23 @@ ${bilgiBBCODE}
             
             renderTarget.style.borderRadius = "0px";
 
-            // Sadece tek, basit ve çalışan html2canvas render fonksiyonu çağrılır.
-            html2canvas(renderTarget, {
-                scale: 2, 
-                useCORS: true, 
-                backgroundColor: "#ffffff" 
-            }).then(canvas => {
-                renderTarget.style.borderRadius = "4px";
+            // dom-to-image kütüphanesi CORS sorunlarını kendi halleder
+            domtoimage.toPng(renderTarget, { bgcolor: '#ffffff' })
+                .then(function (dataUrl) {
+                    renderTarget.style.borderRadius = "4px";
 
-                const link = document.createElement('a');
-                const fileName = `DailyGlobe_${getTurkceTarih().replace(/\s/g, '_')}.png`;
-                link.download = fileName;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                bildirimGoster("Görsel başarıyla indirildi!");
-            }).catch(err => {
-                renderTarget.style.borderRadius = "4px";
-                bildirimGoster("Görsel oluşturulurken bir hata oluştu.");
-                console.error(err);
-            });
+                    const link = document.createElement('a');
+                    const fileName = `DailyGlobe_${getTurkceTarih().replace(/\s/g, '_')}.png`;
+                    link.download = fileName;
+                    link.href = dataUrl;
+                    link.click();
+                    bildirimGoster("Görsel başarıyla indirildi!");
+                })
+                .catch(function (error) {
+                    renderTarget.style.borderRadius = "4px";
+                    bildirimGoster("Görsel oluşturulurken bir hata oluştu.");
+                    console.error('Oops, bir şeyler ters gitti!', error);
+                });
         }
     </script>
 </body>
