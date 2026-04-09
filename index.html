@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GLOBE-NET | ECLIPSE İçerik Sistemi</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         /* --- MODERN RESET & TYPOGRAPHY --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -15,7 +16,7 @@
             overflow: hidden;
             display: flex;
         }
-        ::selection { background: #38761d; color: #fff; }
+        ::selection { background: #0e6638; color: #fff; }
 
         /* --- LOGIN EKRANI --- */
         #login-screen {
@@ -31,7 +32,7 @@
             text-align: center;
         }
         .login-logo {
-            width: 60px; height: 60px; background: #38761d;
+            width: 60px; height: 60px; background: #0e6638;
             border-radius: 8px; margin: 0 auto 20px auto;
             display: flex; align-items: center; justify-content: center;
             font-size: 28px; font-weight: 900; color: #fff; letter-spacing: -2px;
@@ -69,7 +70,7 @@
         }
         .brand-area { padding: 0 20px 20px 20px; border-bottom: 1px solid #1f1f22; margin-bottom: 20px; }
         .brand-area h1 { font-size: 16px; color: #fff; display: flex; align-items: center; gap: 10px; }
-        .brand-badge { background: #38761d; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 4px; }
+        .brand-badge { background: #0e6638; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 4px; }
         
         .nav-section { padding: 0 15px; margin-bottom: 25px; }
         .nav-title { font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; padding-left: 10px; font-weight: 600; }
@@ -80,7 +81,7 @@
             transition: all 0.2s; font-size: 13px; font-weight: 500; cursor: pointer;
         }
         .nav-item:hover { background: #1a1a1d; color: #fff; }
-        .nav-item.active { background: #38761d; color: #fff; }
+        .nav-item.active { background: #0e6638; color: #fff; }
         .nav-item svg { filter: opacity(0.6); transition: all 0.2s; }
         .nav-item:hover svg, .nav-item.active svg { filter: opacity(1); }
         .nav-item img { width: 16px; height: 16px; object-fit: contain; filter: grayscale(100%); opacity: 0.6; transition: all 0.2s;}
@@ -101,16 +102,18 @@
         .breadcrumb { font-size: 13px; color: #666; }
         .breadcrumb span { color: #fff; font-weight: 500; }
         
-        .header-actions { display: flex; align-items: center; gap: 20px; }
-        .save-status { font-size: 12px; color: #555; transition: color 0.3s; }
-        .save-status.saved { color: #38761d; }
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .save-status { font-size: 12px; color: #555; transition: color 0.3s; margin-right: 5px; }
+        .save-status.saved { color: #0e6638; }
         
         .btn-publish {
             background: #fff; color: #000; border: none; padding: 8px 16px;
             border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer;
             transition: all 0.2s; display: flex; align-items: center; gap: 8px;
         }
-        .btn-publish:hover { background: #38761d; color: #fff; }
+        .btn-publish:hover { background: #0e6638; color: #fff; }
+        .btn-download { background: #1a1a1d; color: #fff; border: 1px solid #333; padding: 8px 16px; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px;}
+        .btn-download:hover { background: #2a2a2d; border-color: #555; }
         .btn-reset { background: transparent; color: #888; border: 1px solid #333; padding: 8px 16px; border-radius: 4px; font-size: 13px; cursor: pointer; transition: all 0.2s;}
         .btn-reset:hover { background: #222; color: #fff; }
 
@@ -126,12 +129,14 @@
         
         label { font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
         
-        input[type="text"], textarea {
+        input[type="text"], textarea, select {
             background: #121214; border: 1px solid #1f1f22; color: #ececec;
             padding: 12px 15px; border-radius: 6px; font-family: inherit; font-size: 14px;
             transition: all 0.2s; outline: none;
+            -webkit-appearance: none; -moz-appearance: none; appearance: none;
         }
-        input[type="text"]:focus, textarea:focus { border-color: #38761d; background: #16161a; }
+        select { cursor: pointer; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23999999%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 15px top 50%; background-size: 10px auto; padding-right: 40px; }
+        input[type="text"]:focus, textarea:focus, select:focus { border-color: #0e6638; background: #16161a; }
         
         #baslik { font-size: 24px; font-weight: 700; padding: 15px 20px; background: transparent; border-color: #222;}
         #ozet { font-size: 15px; font-style: italic; color: #aaa; min-height: 80px; resize: vertical; }
@@ -146,26 +151,26 @@
             border: none; background: #0d0d0f; resize: vertical;
             border-left: 2px solid #1f1f22; padding: 15px; border-radius: 0;
         }
-        #icerik:focus { border-left-color: #38761d; }
+        #icerik:focus { border-left-color: #0e6638; }
 
         .word-count { font-size: 11px; color: #555; text-align: right; margin-top: 5px; font-family: monospace;}
 
         /* Önizleme Paneli */
-        .preview-panel { width: 50%; background: #09090b; padding: 30px; overflow-y: auto; display: block; }
+        .preview-panel { width: 50%; background: #09090b; padding: 30px; overflow-y: auto; display: block; border-left: 1px solid #1f1f22;}
         .preview-header { font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 20px; display: flex; justify-content: space-between;}
         
         #live-preview {
-            background-color: #121212; border-radius: 8px; overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid #1f1f22;
+            background-color: transparent; border-radius: 8px; overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4); 
         }
         
-        .empty-state { color: #444; text-align: center; padding: 80px 20px; font-size: 13px; }
+        .empty-state { color: #444; text-align: center; padding: 80px 20px; font-size: 13px; background: #121214; border-radius: 8px; border: 1px solid #1f1f22; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 
         /* Akıllı Bildirim */
         #toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 10001; display: flex; flex-direction: column; gap: 10px; }
         .toast { background: #fff; color: #000; padding: 12px 20px; border-radius: 6px; font-size: 13px; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 10px; transform: translateY(100px); opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .toast.show { transform: translateY(0); opacity: 1; }
-        .toast-icon { width: 18px; height: 18px; background: #38761d; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; }
+        .toast-icon { width: 18px; height: 18px; background: #0e6638; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; }
 
         /* Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
@@ -173,7 +178,6 @@
         ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #333; }
         
-        /* GİZLİ BBCODE ÇIKTISI */
         #output-area { display: none; } 
     </style>
 </head>
@@ -196,7 +200,6 @@
     </div>
 
     <div id="app-container">
-        
         <aside class="sidebar">
             <div class="brand-area">
                 <h1>GLOBE-NET <span class="brand-badge">PRO</span></h1>
@@ -206,7 +209,7 @@
                 <div class="nav-title">İçerik Yönetimi</div>
                 <div class="nav-item active">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                    Yeni Makale
+                    Gazete Şablonu
                 </div>
             </div>
 
@@ -225,7 +228,10 @@
             <div class="nav-section">
                 <div class="nav-title">Sosyal Medya</div>
                 <a href="https://lifeinvader.rina-social.com/eclipse" target="_blank" class="nav-item">
-                    <img src="https://i.hizliresim.com/jd6e0yv.png" alt="LI"> ECLIPSE LifeInvader
+                    <img src="https://i.hizliresim.com/jd6e0yv.png" alt="LI"> ECLIPSE
+                </a>
+                <a href="https://lifeinvader.rina-social.com/dailyglobe" target="_blank" class="nav-item">
+                    <img src="https://i.hizliresim.com/jd6e0yv.png" alt="LI"> Daily Globe
                 </a>
                 <a href="https://lifeinvader.rina-social.com/bobcatsec" target="_blank" class="nav-item">
                     <img src="https://i.hizliresim.com/jd6e0yv.png" alt="LI"> Bobcat Security
@@ -245,12 +251,15 @@
         </aside>
 
         <main class="workspace">
-            
             <header class="workspace-header">
-                <div class="breadcrumb">ECLIPSE Ağı / İçerik Yönetimi / <span>Yeni Makale</span></div>
+                <div class="breadcrumb">ECLIPSE Ağı / İçerik Yönetimi / <span>Gazete Şablonu</span></div>
                 <div class="header-actions">
                     <div class="save-status" id="save-status">Taslak güncel.</div>
                     <button class="btn-reset" onclick="guvenliTemizle()">İçeriği Sıfırla</button>
+                    <button class="btn-download" onclick="gorseliIndir()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Görseli İndir
+                    </button>
                     <button class="btn-publish" onclick="kopyalaBBCODE()">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                         Kodu Kopyala
@@ -259,59 +268,71 @@
             </header>
 
             <div class="workspace-content">
-                
                 <div class="editor-panel">
                     
                     <div class="editor-grid">
                         <div class="form-group">
-                            <label>Yazar</label>
-                            <input type="text" id="yazar" placeholder="Örn: John Doe (Boşsa: Daily Globe)" oninput="otomatikKaydet()">
+                            <label>Haber Konumu (Ön Ek)</label>
+                            <select id="konum" onchange="otomatikKaydet()">
+                                <option value="SAN ANDREAS">SAN ANDREAS</option>
+                                <option value="LOS SANTOS">LOS SANTOS</option>
+                                <option value="BLAINE COUNTY">BLAINE COUNTY</option>
+                                <option value="SANDY SHORES">SANDY SHORES</option>
+                                <option value="PALETO BAY">PALETO BAY</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label>Kategori</label>
-                            <input type="text" id="kategori" placeholder="Örn: Gündem, Politika" oninput="otomatikKaydet()">
+                            <input type="text" id="kategori" placeholder="Örn: Asayiş, Gündem" oninput="otomatikKaydet()">
                         </div>
-                        <div class="form-group full">
+                        <div class="form-group">
+                            <label>Yazar</label>
+                            <input type="text" id="yazar" placeholder="Boş bırakılırsa: Daily Globe" oninput="otomatikKaydet()">
+                        </div>
+                        <div class="form-group">
                             <label>Haber Görseli Linki</label>
                             <input type="text" id="resim" placeholder="https://... (İsteğe bağlı)" oninput="otomatikKaydet()">
                         </div>
+                        <div class="form-group full">
+                            <label>Görsel Alt Yazısı / Bilgisi</label>
+                            <input type="text" id="resimBilgi" placeholder="Örn: Güvenlik kamerası görüntüsü. (İsteğe bağlı)" oninput="otomatikKaydet()">
+                        </div>
                     </div>
 
                     <div class="form-group full" style="margin-bottom: 20px;">
-                        <input type="text" id="baslik" placeholder="Haber Başlığı" oninput="otomatikKaydet()">
+                        <input type="text" id="baslik" placeholder="Haber Manşeti" oninput="otomatikKaydet()">
                     </div>
 
                     <div class="form-group full" style="margin-bottom: 20px;">
-                        <textarea id="ozet" placeholder="Haberin çarpıcı özeti (spot metin). İsteğe bağlıdır." oninput="otomatikKaydet()"></textarea>
+                        <textarea id="ozet" placeholder="Haberin kısa özeti (spot metin). İsteğe bağlıdır." oninput="otomatikKaydet()"></textarea>
                     </div>
 
                     <div class="form-group full" style="margin-bottom: 20px;">
-                        <label>Vurgulu Alıntı (Pull-Quote)</label>
-                        <input type="text" id="alinti" placeholder="Sağ tarafta çıkacak alıntı. İsteğe bağlıdır." oninput="otomatikKaydet()">
+                        <label>Özel Alıntı Kutusu (Paragraf Arası)</label>
+                        <input type="text" id="alinti" placeholder="Haber içerisinde vurgulanacak alıntı. İsteğe bağlıdır." oninput="otomatikKaydet()">
                     </div>
 
                     <div class="form-group full main-content-group">
+                        <label>Ana Metin</label>
                         <div class="toolbar">
                             <button type="button" class="toolbar-btn" onclick="formataEkle('[b]', '[/b]')" title="Kalın">B</button>
                             <button type="button" class="toolbar-btn" style="font-style: italic;" onclick="formataEkle('[i]', '[/i]')" title="Eğik">I</button>
                             <button type="button" class="toolbar-btn" style="text-decoration: underline;" onclick="formataEkle('[u]', '[/u]')" title="Altı Çizili">U</button>
-                            <button type="button" class="toolbar-btn" onclick="formataEkle('[color=#38761d]', '[/color]')" style="color: #4caf50;">Yeşil Metin</button>
+                            <button type="button" class="toolbar-btn" onclick="formataEkle('[color=#0e6638]', '[/color]')" style="color: #0e6638;">Yeşil Metin</button>
                         </div>
-                        <textarea id="icerik" placeholder="Haberin ana gövdesini buraya yazın..." oninput="otomatikKaydet()"></textarea>
-                        <div class="word-count" id="okuma-suresi-bilgi">0 kelime • 1 dk okuma</div>
+                        <textarea id="icerik" placeholder="Haberin gövdesini yazın. Enter tuşu ile ayırdığınız her satır yeni bir paragraf oluşturur..." oninput="otomatikKaydet()"></textarea>
                     </div>
                 </div>
 
                 <div class="preview-panel">
                     <div class="preview-header">
+                        <span>Klasik Gazete Şablonu</span>
                         <span>Canlı Render</span>
-                        <span>Forum Görünümü</span>
                     </div>
                     <div id="live-preview">
                         <div class="empty-state">Haber içeriği oluşturulmaya başlandığında<br>önizleme burada görünecektir.</div>
                     </div>
                 </div>
-
             </div>
         </main>
     </div>
@@ -320,7 +341,21 @@
     <textarea id="output" style="position: absolute; left: -9999px; opacity: 0;"></textarea>
 
     <script>
-        // --- AKILLI BİLDİRİM (TOAST) ---
+        // Tarih Oluşturucu
+        function getTurkceTarih() {
+            const aylar = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+            const d = new Date();
+            return d.getDate() + " " + aylar[d.getMonth()] + " " + d.getFullYear();
+        }
+
+        // Title Case Dönüştürücü (Örn: SAN ANDREAS -> San Andreas)
+        function toTitleCase(str) {
+            return str.replace(/\w\S*/g, function(txt){
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            });
+        }
+
+        // --- BİLDİRİM ---
         function bildirimGoster(mesaj) {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -335,7 +370,7 @@
             }, 3000);
         }
 
-        // --- SİNEMATİK LOGIN ---
+        // --- LOGIN ---
         function sistemeGiris() {
             const btn = document.getElementById('login-button');
             const btnText = document.getElementById('btn-text');
@@ -351,11 +386,9 @@
             setTimeout(() => {
                 loginScreen.style.opacity = "0";
                 loginScreen.style.visibility = "hidden";
-                
                 setTimeout(() => {
                     loginScreen.style.display = "none";
                     appContainer.style.display = "flex";
-                    
                     setTimeout(() => {
                         appContainer.style.opacity = "1";
                         bildirimGoster("Güvenli ağa bağlanıldı.");
@@ -376,13 +409,13 @@
             }
         });
 
-        // --- VERİ YÖNETİMİ & QOL ---
-        const alanlar = ['yazar', 'kategori', 'resim', 'baslik', 'ozet', 'alinti', 'icerik'];
+        // --- VERİ YÖNETİMİ ---
+        const alanlar = ['yazar', 'kategori', 'konum', 'resim', 'resimBilgi', 'baslik', 'ozet', 'alinti', 'icerik'];
 
         function verileriYukle() {
             let veriVar = false;
             alanlar.forEach(id => {
-                const kayitliVeri = localStorage.getItem('dg_cms_' + id);
+                const kayitliVeri = localStorage.getItem('dg_classic_' + id);
                 if (kayitliVeri) {
                     document.getElementById(id).value = kayitliVeri;
                     veriVar = true;
@@ -394,7 +427,7 @@
         let saveTimeout;
         function otomatikKaydet() {
             alanlar.forEach(id => {
-                localStorage.setItem('dg_cms_' + id, document.getElementById(id).value);
+                localStorage.setItem('dg_classic_' + id, document.getElementById(id).value);
             });
             
             const status = document.getElementById('save-status');
@@ -413,9 +446,10 @@
         function guvenliTemizle() {
             if(confirm("Tüm içeriği silmek istediğinize emin misiniz? Bu işlem geri alınamaz.")) {
                 alanlar.forEach(id => {
-                    document.getElementById(id).value = '';
-                    localStorage.removeItem('dg_cms_' + id);
+                    if(id !== 'konum') document.getElementById(id).value = '';
+                    localStorage.removeItem('dg_classic_' + id);
                 });
+                document.getElementById('konum').value = 'SAN ANDREAS';
                 uretAndOnizle();
                 document.getElementById('save-status').innerText = "Taslak temizlendi.";
                 document.getElementById('save-status').classList.remove('saved');
@@ -423,7 +457,6 @@
             }
         }
 
-        // --- BBCODE & FORMATLAMA ---
         function formataEkle(tagBas, tagSon) {
             const textarea = document.getElementById('icerik');
             const baslangic = textarea.selectionStart;
@@ -436,112 +469,132 @@
             const yeniImlecKonumu = secilenMetin.length > 0 ? baslangic + tagBas.length + secilenMetin.length + tagSon.length : baslangic + tagBas.length;
             textarea.setSelectionRange(yeniImlecKonumu, yeniImlecKonumu);
             textarea.scrollTop = scrollPozisyonu;
-            
             otomatikKaydet(); 
         }
 
+        // --- BBCODE & HTML ÜRETİMİ ---
         function uretAndOnizle() {
             const yazarInput = document.getElementById('yazar').value.trim();
             const kategoriInput = document.getElementById('kategori').value.trim();
+            const seciliKonum = document.getElementById('konum').value;
             const resimInput = document.getElementById('resim').value.trim();
+            const resimBilgiInput = document.getElementById('resimBilgi').value.trim();
             const baslikInput = document.getElementById('baslik').value.trim();
             const ozetInput = document.getElementById('ozet').value.trim();
             const alintiInput = document.getElementById('alinti').value.trim();
-            const icerikInput = document.getElementById('icerik').value.trim();
+            const icerikRaw = document.getElementById('icerik').value.trim();
 
-            if(!yazarInput && !kategoriInput && !resimInput && !baslikInput && !ozetInput && !alintiInput && !icerikInput) {
+            if(!yazarInput && !kategoriInput && !resimInput && !baslikInput && !ozetInput && !alintiInput && !icerikRaw) {
                 document.getElementById('live-preview').innerHTML = `<div class="empty-state">Haber içeriği oluşturulmaya başlandığında<br>önizleme burada görünecektir.</div>`;
                 document.getElementById('output').value = "";
-                document.getElementById('okuma-suresi-bilgi').innerText = `0 kelime • 1 dk okuma`;
                 return;
             }
 
-            const tamMetinCount = (icerikInput + " " + ozetInput).trim();
-            const kelimeSayisi = tamMetinCount ? tamMetinCount.split(/\s+/).filter(word => word.length > 0).length : 0;
-            let dakika = Math.ceil(kelimeSayisi / 200);
-            if(dakika < 1) dakika = 1;
-            document.getElementById('okuma-suresi-bilgi').innerText = `${kelimeSayisi} kelime • ${dakika} dk okuma`;
-
             const yazar = yazarInput !== "" ? yazarInput : "Daily Globe";
-            const kategori = kategoriInput !== "" ? kategoriInput : "GÜNDEM";
-            const baslik = baslikInput !== "" ? baslikInput : "HABER BAŞLIĞI";
-            const icerikRaw = icerikInput !== "" ? icerikInput : "Ana metin bekleniyor...";
-            const sure = dakika + " dk";
-            const kategoriUst = kategori.toUpperCase();
+            const kategori = kategoriInput !== "" ? kategoriInput.toUpperCase() : "GÜNDEM";
+            const baslik = baslikInput !== "" ? baslikInput : "Haber Başlığı Bekleniyor...";
+            const konumBaslik = toTitleCase(seciliKonum); 
+            const gununTarihi = getTurkceTarih(); 
 
-            let ozetKutusuBBCODE = "";
-            let ozetKutusuHTML = "";
-            if (ozetInput !== "") {
-                ozetKutusuBBCODE = `[div style="background: #1a1a1a; padding: 10px 15px; border-left: 2px solid #555; margin-bottom: 15px; font-size: 12px; color: #aaa; font-style: italic;"][b]ÖZET:[/b] ${ozetInput}[/div]`;
-                ozetKutusuHTML = `<div style="background: #1a1a1a; padding: 6px 10px; border-left: 2px solid #555; margin-bottom: 10px; font-size: 11px; color: #aaa; font-style: italic;"><b>ÖZET:</b> ${ozetInput}</div>`;
-            }
+            // --- GÖRSEL KISMI ---
+            let gorselKutusuBBCODE = "";
+            let gorselKutusuHTML = "";
 
-            let alintiKutusu = "";
-            let alintiOnizlemeHTML = "";
-            if (alintiInput !== "") {
-                alintiKutusu = `[div style="float: right; margin: 5px 0 5px 15px; border-top: 1px solid #38761d; border-bottom: 1px solid #38761d; padding: 10px; width: 200px; font-size: 15px; font-weight: bold; color: #fff; text-align: center; font-family: 'Georgia', serif; line-height: 1.3;"]"${alintiInput}"[/div]`;
-                alintiOnizlemeHTML = `<div style="float: right; margin: 5px 0 5px 15px; border-top: 1px solid #38761d; border-bottom: 1px solid #38761d; padding: 10px; width: 180px; font-size: 14px; font-weight: bold; color: #fff; text-align: center; font-family: 'Georgia', serif; line-height: 1.3;">"${alintiInput}"</div>`;
-            }
-
-            let baslikBBCODE = "";
-            let baslikHTML = "";
-
-            /* YENİ GÖRSEL MERKEZLEME MANTIĞI: BBCode tarafında background-image kullanarak merkezledik */
             if (resimInput !== "") {
-                baslikBBCODE = `[div style="padding: 0; position: relative; height: 300px; background-image: url('${resimInput}'); background-size: cover; background-position: center; border-bottom: 2px solid #38761d;"][div style="position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, #000, transparent); padding: 20px; box-sizing: border-box;"][div style="background: #38761d; color: #fff; padding: 3px 10px; font-size: 10px; font-weight: bold; display: inline-block; margin-bottom: 5px; text-transform: uppercase;"]${kategoriUst}[/div][div style="font-size: 32px; font-weight: bold; color: #fff; line-height: 1.1; font-family: 'Impact', sans-serif; text-shadow: 1px 1px 3px #000;"]${baslik}[/div][/div][/div]`;
+                let bilgiBBCODE = "";
+                let bilgiHTML = "";
+                if(resimBilgiInput !== "") {
+                    bilgiBBCODE = `[div style="font-size: 9px; color: #999; margin-top: 2px; font-family: Arial, sans-serif; text-align: left;"]${resimBilgiInput}[/div]`;
+                    bilgiHTML = `<div style="font-size: 9px; color: #999; margin-top: 2px; font-family: Arial, sans-serif; text-align: left;">${resimBilgiInput}</div>`;
+                }
+
+                gorselKutusuBBCODE = `
+[div style="padding: 0 30px; margin-top: 10px; margin-bottom: 10px;"]
+[div style="border: 1px solid #eee; padding: 3px;"][div style="width: 100%; height: 300px; background-color: #f5f5f5; overflow: hidden; display: flex; align-items: center; justify-content: center;"][img]${resimInput}[/img][/div][/div]
+${bilgiBBCODE}
+[/div]`;
                 
-                baslikHTML = `
-                    <div style="position: relative; height: 150px; background-image: url('${resimInput}'); background-size: cover; background-position: center; border-bottom: 2px solid #38761d;">
-                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, #000, transparent); padding: 10px; box-sizing: border-box;">
-                            <div style="background: #38761d; color: #fff; padding: 2px 6px; font-size: 9px; font-weight: bold; display: inline-block; text-transform: uppercase;">${kategoriUst}</div>
-                            <div style="font-size: 20px; font-weight: bold; color: #fff; font-family: 'Impact', sans-serif; text-shadow: 1px 1px 2px #000;">${baslik}</div>
-                        </div>
-                    </div>`;
-            } else {
-                baslikBBCODE = `[div style="padding: 20px; background-color: #1a1a1a; border-bottom: 2px solid #38761d;"][div style="background: #38761d; color: #fff; padding: 3px 10px; font-size: 10px; font-weight: bold; display: inline-block; margin-bottom: 10px; text-transform: uppercase;"]${kategoriUst}[/div][div style="font-size: 32px; font-weight: bold; color: #fff; line-height: 1.1; font-family: 'Impact', sans-serif; text-shadow: 1px 1px 3px #000;"]${baslik}[/div][/div]`;
-                baslikHTML = `
-                    <div style="padding: 15px; background-color: #1a1a1a; border-bottom: 2px solid #38761d;">
-                        <div style="background: #38761d; color: #fff; padding: 2px 6px; font-size: 9px; font-weight: bold; display: inline-block; margin-bottom: 8px; text-transform: uppercase;">${kategoriUst}</div>
-                        <div style="font-size: 20px; font-weight: bold; color: #fff; font-family: 'Impact', sans-serif; text-shadow: 1px 1px 2px #000;">${baslik}</div>
-                    </div>`;
+                gorselKutusuHTML = `
+<div style="padding: 0 30px; margin-top: 10px; margin-bottom: 10px;" data-html2canvas-ignore="false">
+    <div style="border: 1px solid #eee; padding: 3px;">
+        <div style="width: 100%; height: 300px; background-color: #f5f5f5; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+            <img src="${resimInput}" style="max-width: 100%; max-height: 100%; object-fit: cover;" crossorigin="anonymous">
+        </div>
+    </div>
+    ${bilgiHTML}
+</div>`;
             }
 
-            const bbcode = `[div style="max-width: 850px; margin: 0 auto; background-color: #121212; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #ccc; border-left: 5px solid #38761d; box-shadow: 0 0 20px rgba(0,0,0,0.5);"]${baslikBBCODE}[div style="padding: 20px;"]${ozetKutusuBBCODE}[div style="font-size: 14px; line-height: 1.5; color: #ccc; text-align: justify;"][b][color=#38761d]SAN ANDREAS —[/color][/b] ${alintiKutusu}${icerikRaw}[/div][div style="margin-top: 20px; border-top: 1px solid #222; padding-top: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #666;"][div]Yazar: [b][color=#38761d]${yazar}[/color][/b][/div][div]Kategori: [b]${kategori}[/b] | Okuma Süresi: [b]${sure}[/b][/div][/div][/div][/div]`;
+            // --- İÇERİK, PARAGRAFLAR VE ALINTI ---
+            const icerikSatirlari = icerikRaw !== "" ? icerikRaw.split('\n').filter(p => p.trim() !== "") : ["Ana metin bekleniyor..."];
+            let icerikBBCODE = "";
+            let icerikHTML = "";
+
+            icerikSatirlari.forEach((paragraf, index) => {
+                // BBCode formatlarını HTML'e çevir (sadece HTML önizleme için)
+                let parsedHTML = paragraf.replace(/\[b\]/g, '<b>').replace(/\[\/b\]/g, '</b>')
+                                         .replace(/\[i\]/g, '<i>').replace(/\[\/i\]/g, '</i>')
+                                         .replace(/\[u\]/g, '<u>').replace(/\[\/u\]/g, '</u>')
+                                         .replace(/\[color=(.*?)\]/g, '<span style="color:$1">').replace(/\[\/color\]/g, '</span>');
+
+                // İlk paragrafa KONUM etiketini ekle
+                if (index === 0) {
+                    icerikBBCODE += `[div style="margin-bottom: 8px; line-height: 1.4;"][span style="font-weight: bold; color: #0e6638;"]${seciliKonum} -[/span] ${paragraf}[/div]`;
+                    icerikHTML += `<div style="margin-bottom: 8px; line-height: 1.4;"><span style="font-weight: bold; color: #0e6638;">${seciliKonum} -</span> ${parsedHTML}</div>`;
+                } else {
+                    icerikBBCODE += `[div style="margin-bottom: 8px; line-height: 1.4;"]${paragraf}[/div]`;
+                    icerikHTML += `<div style="margin-bottom: 8px; line-height: 1.4;">${parsedHTML}</div>`;
+                }
+
+                // Alıntı varsa ilk paragraftan sonra ekle (eğer tek paragrafsa onun altına ekler)
+                if (alintiInput !== "" && index === 0) {
+                    icerikBBCODE += `[div style="margin: 10px 0; padding-left: 10px; border-left: 3px solid #0e6638; font-style: italic; color: #555; font-size: 14px; line-height: 1.3;"]"${alintiInput}"[/div]`;
+                    icerikHTML += `<div style="margin: 10px 0; padding-left: 10px; border-left: 3px solid #0e6638; font-style: italic; color: #555; font-size: 14px; line-height: 1.3;">"${alintiInput}"</div>`;
+                }
+            });
+
+            // --- FULL BBCODE ---
+            // FIX: overflow: hidden; eklendi (köşe render sorunu için)
+            const bbcode = `[div style="max-width: 800px; margin: 0 auto; background-color: #ffffff; font-family: 'Times New Roman', serif; color: #222; box-shadow: 0 0 5px rgba(0,0,0,0.05); overflow: hidden; border-top: 4px solid #0e6638;"][div style="text-align: center; padding: 15px 0 5px 0; border-bottom: 1px solid #eee; margin: 0;"][div style="font-size: 42px; font-weight: 900; color: #0e6638; letter-spacing: -1px; line-height: 1; text-transform: uppercase; margin: 0;"]DAILY GLOBE[/div][div style="font-family: Arial, sans-serif; font-size: 9px; color: #999; letter-spacing: 3px; text-transform: uppercase; margin-top: 2px;"]LOS SANTOS • EST. 2026[/div][/div][div style="border-bottom: 1px solid #eee; padding: 4px 0; text-align: center; font-family: Arial, sans-serif; font-size: 10px; color: #888; margin: 0; line-height: 1;"][span style="border: 1px solid #0e6638; padding: 1px 5px; border-radius: 2px; color: #0e6638; font-weight: bold;"]${kategori}[/span] [span]${gununTarihi}[/span] [span]•[/span] [span]${konumBaslik}[/span][/div][div style="padding: 15px 30px 5px 30px; text-align: center; margin: 0;"][div style="font-size: 28px; font-weight: bold; color: #111; line-height: 1.1; margin-bottom: 8px;"]${baslik}[/div][div style="font-family: Arial, sans-serif; font-size: 14px; color: #666; line-height: 1.3; font-style: italic; margin: 0;"]Haberin kısa özeti buraya gelecek...[/div][div style="font-family: Arial, sans-serif; font-size: 10px; color: #bbb; margin-top: 8px;"]Haber: [span style="color: #444; font-weight: bold;"]${yazar}[/span][/div][/div]${gorselKutusuBBCODE}[div style="padding: 0 30px 15px 30px; font-size: 14px; color: #222; text-align: justify; font-family: 'Georgia', serif; margin: 0;"]${icerikBBCODE}[/div][div style="padding: 8px; text-align: center; border-top: 1px solid #eee; font-family: Arial, sans-serif; font-size: 9px; color: #bbb; margin: 0;"][div style="font-weight: bold; color: #ccc;"]THE DAILY GLOBE[/div][div]© 2026 Tüm Hakları Saklıdır[/div][/div][/div]`;
+            
             document.getElementById('output').value = bbcode;
 
-            let icerikHTML = icerikRaw.replace(/\n/g, '<br>')
-                                      .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
-                                      .replace(/\[b\]/g, '<b>').replace(/\[\/b\]/g, '</b>')
-                                      .replace(/\[i\]/g, '<i>').replace(/\[\/i\]/g, '</i>')
-                                      .replace(/\[u\]/g, '<u>').replace(/\[\/u\]/g, '</u>')
-                                      .replace(/\[color=#38761d\]/g, '<span style="color:#38761d">').replace(/\[\/color\]/g, '</span>');
-
+            // --- FULL HTML (PREVIEW) ---
+            // FIX: overflow: hidden; eklendi (köşe render sorunu için)
             const previewHTML = `
-                <div style="max-width: 100%; background-color: #121212; font-family: 'Segoe UI', sans-serif; color: #ccc; border-left: 5px solid #38761d; font-size: 12px; box-sizing: border-box;">
-                    ${baslikHTML}
-                    <div style="padding: 10px;">
-                        ${ozetKutusuHTML}
-                        <div style="line-height: 1.5; text-align: justify;">
-                            <b style="color: #38761d;">SAN ANDREAS —</b> ${alintiOnizlemeHTML}${icerikHTML}
-                        </div>
-                        <div style="margin-top: 15px; border-top: 1px solid #222; padding-top: 8px; display: flex; justify-content: space-between; font-size: 10px; color: #666;">
-                            <div>Yazar: <b style="color: #38761d;">${yazar}</b></div>
-                            <div>Kategori: <b>${kategori}</b> | Okuma Süresi: <b>${sure}</b></div>
-                        </div>
-                    </div>
-                </div>`;
+            <div id="render-target" style="max-width: 800px; margin: 0 auto; background-color: #ffffff; font-family: 'Times New Roman', serif; color: #222; overflow: hidden; border-top: 4px solid #0e6638; border-radius: 4px;">
+                <div style="text-align: center; padding: 15px 0 5px 0; border-bottom: 1px solid #eee; margin: 0;">
+                    <div style="font-size: 42px; font-weight: 900; color: #0e6638; letter-spacing: -1px; line-height: 1; text-transform: uppercase; margin: 0;">DAILY GLOBE</div>
+                    <div style="font-family: Arial, sans-serif; font-size: 9px; color: #999; letter-spacing: 3px; text-transform: uppercase; margin-top: 2px;">LOS SANTOS • EST. 2026</div>
+                </div>
+                <div style="border-bottom: 1px solid #eee; padding: 4px 0; text-align: center; font-family: Arial, sans-serif; font-size: 10px; color: #888; margin: 0; line-height: 1;">
+                    <span style="border: 1px solid #0e6638; padding: 1px 5px; border-radius: 2px; color: #0e6638; font-weight: bold;">${kategori}</span> <span>${gununTarihi}</span> <span>•</span> <span>${konumBaslik}</span>
+                </div>
+                <div style="padding: 15px 30px 5px 30px; text-align: center; margin: 0;">
+                    <div style="font-size: 28px; font-weight: bold; color: #111; line-height: 1.1; margin-bottom: 8px;">${baslik}</div>
+                    <div style="font-family: Arial, sans-serif; font-size: 14px; color: #666; line-height: 1.3; font-style: italic; margin: 0;">Haberin kısa özeti buraya gelecek...</div>
+                    <div style="font-family: Arial, sans-serif; font-size: 10px; color: #bbb; margin-top: 8px;">Haber: <span style="color: #444; font-weight: bold;">${yazar}</span></div>
+                </div>
+                ${gorselKutusuHTML}
+                <div style="padding: 0 30px 15px 30px; font-size: 14px; color: #222; text-align: justify; font-family: 'Georgia', serif; margin: 0;">
+                    ${icerikHTML}
+                </div>
+                <div style="padding: 8px; text-align: center; border-top: 1px solid #eee; font-family: Arial, sans-serif; font-size: 9px; color: #bbb; margin: 0;">
+                    <div style="font-weight: bold; color: #ccc;">THE DAILY GLOBE</div>
+                    <div>© 2026 Tüm Hakları Saklıdır</div>
+                </div>
+            </div>`;
             
             document.getElementById('live-preview').innerHTML = previewHTML;
         }
 
+        // --- PANOLAMA İŞLEMİ ---
         function kopyalaBBCODE() {
             const bbcode = document.getElementById('output').value;
-            
             if(!bbcode) {
                 bildirimGoster("Önce bir haber metni oluşturmalısınız.");
                 return;
             }
-
             navigator.clipboard.writeText(bbcode).then(() => {
                 bildirimGoster("BBCode panoya başarıyla kopyalandı!");
             }).catch(err => {
@@ -551,6 +604,34 @@
                 document.execCommand("copy");
                 outputArea.style.display = "none";
                 bildirimGoster("BBCode panoya kopyalandı!");
+            });
+        }
+
+        // --- GÖRSEL İNDİRME İŞLEMİ ---
+        function gorseliIndir() {
+            const renderTarget = document.getElementById('render-target');
+            
+            if (!renderTarget) {
+                bildirimGoster("İndirilecek bir haber bulunamadı!");
+                return;
+            }
+
+            bildirimGoster("Görsel hazırlanıyor, lütfen bekleyin...");
+
+            html2canvas(renderTarget, {
+                scale: 2, 
+                useCORS: true, 
+                backgroundColor: "#ffffff" 
+            }).then(canvas => {
+                const link = document.createElement('a');
+                const fileName = `DailyGlobe_${getTurkceTarih().replace(/\s/g, '_')}.png`;
+                link.download = fileName;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                bildirimGoster("Görsel başarıyla indirildi!");
+            }).catch(err => {
+                bildirimGoster("Görsel oluşturulurken bir hata oluştu.");
+                console.error(err);
             });
         }
     </script>
